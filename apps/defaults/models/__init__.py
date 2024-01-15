@@ -1,0 +1,1 @@
+from apps.defaults.models.base_model import BaseModel
