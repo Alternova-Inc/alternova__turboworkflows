@@ -13,3 +13,6 @@ class Profile(BaseModel):
     class Meta:
         verbose_name = 'Profile'
         verbose_name_plural = 'Profiles'
+
+    def __str__(self):
+        return f"{self.user.first_name} {self.user.last_name}"
