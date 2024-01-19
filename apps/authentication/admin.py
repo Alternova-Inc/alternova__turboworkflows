@@ -22,6 +22,7 @@ class CompanyAdmin(admin.ModelAdmin):
 
 class RoleAdmin(admin.ModelAdmin):
     list_display = ('id', 'role_name')
+    filter_horizontal = ('workflows',)
 
 
 admin.site.register(Profile, ProfileAdmin)
