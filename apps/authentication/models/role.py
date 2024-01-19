@@ -2,6 +2,7 @@ from apps.defaults.models.base_model import BaseModel
 from apps.workflows.models.workflow import Workflow
 from apps.authentication.models.company import Company
 from django.db import models
+from django.core.exceptions import ValidationError
 
 
 class Role(BaseModel):
@@ -24,3 +25,10 @@ class Role(BaseModel):
     def __str__(self):
         return self.role_name
     
+    def clean(self):
+        if self.is_default and Role.objects.filter(company=self.company, is_default=True).exclude(pk=self.pk).exists():
+            raise ValidationError("A default role for this company already exists.")
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
