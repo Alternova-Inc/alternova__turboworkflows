@@ -4,6 +4,7 @@ from django.contrib import admin
 from apps.authentication.models.profile import Profile
 from apps.authentication.models.company import Company
 from apps.authentication.models.company_profile_set import CompanyProfileSet
+from apps.authentication.models.role import Role
 
 class CompanyProfileSetInline(admin.TabularInline):
     model = CompanyProfileSet
@@ -19,6 +20,10 @@ class ProfileAdmin(admin.ModelAdmin):
 class CompanyAdmin(admin.ModelAdmin):
     list_display = ('id', 'company_name')
 
+class RoleAdmin(admin.ModelAdmin):
+    list_display = ('id', 'role_name')
+
 
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Company, CompanyAdmin)
+admin.site.register(Role, RoleAdmin)
