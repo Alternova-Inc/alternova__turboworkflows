@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from apps.authentication.models.role import Role
 from apps.defaults.models.base_model import BaseModel
 from django.db import models
 
@@ -9,6 +10,7 @@ class Profile(BaseModel):
     """
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
 
     class Meta:
         verbose_name = 'Profile'

@@ -15,6 +15,7 @@ class Role(BaseModel):
     role_name = models.CharField(max_length=40, help_text="Role Name", verbose_name="Name")
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     workflows = models.ManyToManyField(Workflow, blank=True)
+    is_default = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'Role'
