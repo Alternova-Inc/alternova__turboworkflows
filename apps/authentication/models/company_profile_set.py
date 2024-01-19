@@ -1,3 +1,4 @@
+from apps.authentication.models.role import Role
 from apps.defaults.models.base_model import BaseModel
 from django.db import models
 from apps.authentication.models.company import Company
@@ -11,6 +12,7 @@ class CompanyProfileSet(BaseModel):
 
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
 
     class Meta:
         verbose_name = 'Company-Profile Set'
