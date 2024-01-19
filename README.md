@@ -18,10 +18,11 @@ Follow these steps to install TurboWorkflows:
 
 2. **Set up a Conda environment (Optional)**
     It's recommended to use a Conda environment to isolate your project and avoid conflicts with other packages. If you're using Miniconda, you can set up a Conda environment like this:
-
-    `conda create --name turboworkflows python=3.8` 
-    `conda activate turboworkflows`
-    <br>
+```
+    conda create --name turboworkflows python=3.9
+    conda activate turboworkflows
+```
+<br>
 
 3. **Install the dependencies**
 
@@ -59,4 +60,4 @@ You should now be able to access TurboWorkflows at http://localhost:8000.
    * Access the Django Admin at http://localhost:8000/admin.
    * Start using it!
 
-Developed by Alternova, Inc.
+Developed by [Alternova, Inc](https://alternova.com).
