@@ -5,6 +5,7 @@ from django.db import models
 class Workflow(BaseModel):
     """
     - This model holds the workflows that are created by each company
+    - Triggers a signal that adds the workflow to the admin Role of the company
     """
 
     workflow_name = models.CharField(max_length=40, help_text="Workflow Name", verbose_name="Name")
