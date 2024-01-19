@@ -21,7 +21,7 @@ class CompanyAdmin(admin.ModelAdmin):
     list_display = ('id', 'company_name')
 
 class RoleAdmin(admin.ModelAdmin):
-    list_display = ('id', 'role_name')
+    list_display = ('id', 'role_name', 'company')
     filter_horizontal = ('workflows',)
 
 

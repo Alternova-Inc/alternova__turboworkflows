@@ -3,8 +3,8 @@ from django.db import models
 
 class Company(BaseModel):
     """
-    - This model represents any user in the platform.
-    - Extends the Django's default user model.
+    - This model represents any company in the platform.
+    - When a company is created a signal generates 2 roles: default and admin.
     """
 
     company_name = models.CharField(max_length=40, help_text="Company Name", verbose_name="Name")
