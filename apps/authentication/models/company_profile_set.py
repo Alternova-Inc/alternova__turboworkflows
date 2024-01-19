@@ -6,8 +6,8 @@ from apps.authentication.models.profile import Profile
 
 class CompanyProfileSet(BaseModel):
     """
-    - This model represents any user in the platform.
-    - Extends the Django's default user model.
+    - This model represents the relationship between a company and a profile.
+    - The role is the one that defines the permissions that the profile has in the company.
     """
 
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
