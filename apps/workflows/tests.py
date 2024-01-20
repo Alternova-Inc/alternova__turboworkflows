@@ -12,7 +12,7 @@ class AddWorkflowToRoleSignalTest(TestCase):
         self.company = Company.objects.create(company_name='Test Company')
 
     def test_workflow_added_to_admin_role(self):
-        # Create an admin role for the company
+        # get the admin role for the company
         admin_role = Role.objects.get(company=self.company, role_name='admin')
 
         # Create a new workflow for the company
