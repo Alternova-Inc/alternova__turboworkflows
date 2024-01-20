@@ -4,7 +4,7 @@ from apps.authentication.models.role import Role
 from apps.workflows.models.workflow import Workflow
 
 @receiver(post_save, sender=Workflow)
-def create_role_for_company(sender, instance, created, **kwargs):
+def add_workflow_to_role(sender, instance, created, **kwargs):
     if created:
         # Get the admin role for the company
         admin_role = Role.objects.get(company=instance.company, role_name='admin')
