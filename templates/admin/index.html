@@ -1,0 +1,21 @@
+{% extends "admin/index.html" %}
+
+{% block content %}
+    {% for message in status_messages %}
+        {% if message.is_active %}
+            <div class="status_message" 
+                style="background-color: #2196F3;
+                color: white;
+                padding: 20px;
+                opacity: 0.83;
+                transition: opacity 0.6s;
+                margin-bottom: 20px;
+                font-size: 16px;
+                border-radius: 10px;"
+            >
+                {{ message.content }}
+            </div>
+        {% endif %}
+    {% endfor %}
+    {{ block.super }}
+{% endblock %}
