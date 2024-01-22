@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from apps.defaults.models.status_message import StatusMessage
+
 # Register your models here.
 class BaseModelAdmin(admin.ModelAdmin):
     """
@@ -17,3 +19,11 @@ class BaseModelAdmin(admin.ModelAdmin):
         self.list_display = ['id'] + list(self.list_extend) + ['is_active', 'created_at', 'updated_at']
         self.search_fields = ['id'] + list(self.search_fields_extend)
         super().__init__(model, admin_site)
+
+
+class StatusMessageAdmin(BaseModelAdmin):
+    list_extend = ('status_message_name', 'content',)
+    search_fields_extend = ('status_message_name', 'content',)
+
+
+admin.site.register(StatusMessage, StatusMessageAdmin)
