@@ -1,3 +1,4 @@
+from django.forms import ValidationError
 from apps.defaults.models.base_model import BaseModel
 from django.db import models
 
@@ -18,7 +19,12 @@ class StatusMessage(BaseModel):
     def __str__(self):
         return f"{self.status_message_name}"
     
+    def clean(self):
+        if self.is_active and StatusMessage.objects.filter(is_active=True).exclude(pk=self.pk).exists():
+            raise ValidationError("An active Status Message already exists.")
+
     def save(self, *args, **kwargs):
+        self.full_clean()
         if self._state.adding: # if object is new, not from the DB
             self.is_active = False
         super().save(*args, **kwargs)
