@@ -16,5 +16,5 @@ class Workflow(BaseModel):
         verbose_name_plural = 'Workflows'
 
     def __str__(self):
-        return self.workflow_name
+        return f'{self.workflow_name} - {self.company.company_name}'
     
