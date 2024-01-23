@@ -1,10 +1,11 @@
 from apps.defaults.models.base_model import BaseModel
 from apps.authentication.models.company import Company
 from django.db import models
+from apps.defaults.models.base_polymorphic_model import BasePolymorphicModel
 
 from apps.workflows.models.workflow import Workflow
 
-class WorkflowStep(BaseModel):
+class WorkflowStep(BasePolymorphicModel):
     """
     - Workflow Steps are each action that is taken in a workflow.
     """
@@ -25,4 +26,32 @@ class WorkflowStep(BaseModel):
         super().save(*args, **kwargs)
     
 
+class FormWorkflowStep(WorkflowStep):
+    """
+    - Forms that people will fill
+    """
+
+    class Meta:
+        verbose_name = 'Form Step'
+        verbose_name_plural = 'Form Steps'
+
+
+class ActionWorkflowStep(WorkflowStep):
+    """
+    - Actions that the system will execute
+    """ 
+    
+    class Meta:
+        verbose_name = 'Action Step'
+        verbose_name_plural = 'Action Steps'
+
+
+class ApprovalWorkflowStep(WorkflowStep):
+    """
+    - Approvals people will make
+    """ 
+
+    class Meta:
+        verbose_name = 'Approval Step'
+        verbose_name_plural = 'Approval Steps'
     
