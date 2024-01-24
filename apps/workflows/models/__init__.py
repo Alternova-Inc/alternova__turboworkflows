@@ -1,2 +1,5 @@
 from apps.workflows.models.workflow import Workflow
-from apps.workflows.models.workflow_step import WorkflowStep, FormWorkflowStep, ActionWorkflowStep, ApprovalWorkflowStep
+from apps.workflows.models.workflow_step import WorkflowStep
+from apps.workflows.models.workflow_step_form import WorkflowStepForm
+from apps.workflows.models.workflow_step_action import WorkflowStepAction
+from apps.workflows.models.workflow_step_approval import WorkflowStepApproval
