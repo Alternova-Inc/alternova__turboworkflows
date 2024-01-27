@@ -1,8 +1,7 @@
 from django.contrib import admin
-from apps.authentication.models.company import Company
+from apps.authentication.models.company_profile_set import CompanyProfileSet
 from apps.authentication.models.profile import Profile
 from apps.defaults.admin import BaseModelAdmin
-from apps.workflows.models.user_form import UserForm
 from apps.workflows.models.user_form_field import UserFormField
 from apps.workflows.models.user_form_content import UserFormContent
 from apps.workflows.models.workflow_step_action import WorkflowStepAction
@@ -35,7 +34,12 @@ class WorkflowStepAdmin(BaseModelAdmin):
     
 
 class FormWorkflowStepAdmin(WorkflowStepAdmin):
-    pass
+    list_extend = ('workflow_step_name', 'company_name',)
+    search_fields_extend = ('workflow_step_name', 'company_name',)
+    list_filter = ('company',)
+    
+    def company_name(self, obj):
+        return f"{obj.company.company_name}"
 
 
 class ActionWorkflowStepAdmin(WorkflowStepAdmin):
@@ -45,19 +49,10 @@ class ActionWorkflowStepAdmin(WorkflowStepAdmin):
 class ApprovalWorkflowStepAdmin(WorkflowStepAdmin):
     pass
 
-
-class UserFormAdmin(BaseModelAdmin):
-    list_extend = ('user_form_name', 'company_name',)
-    search_fields_extend = ('user_form_name', 'company_name',)
-    list_filter = ('company',)
-    
-    def company_name(self, obj):
-        return f"{obj.company.company_name}"
-    
     
 class UserFormFieldAdmin(BaseModelAdmin):
     list_extend = ('code', 'public_name', 'type', 'company_name',)
-    search_fields_extend = ('public_name', 'company_name',)
+    search_fields_extend = ('public_name', 'company__company_name',)
     list_filter = ('company',)
     
     def company_name(self, obj):
@@ -65,19 +60,18 @@ class UserFormFieldAdmin(BaseModelAdmin):
     
 
 class UserFormContentAdmin(BaseModelAdmin):
-    list_extend = ('user_form_name', 'company_name', 'field_count',)
-    search_fields_extend = ('user_form__user_form_name', 'company_name',)
-    list_filter = ('company','user_form',)
-    #readonly_fields = ('company',)
+    list_extend = ('user_form_name', 'form_field_name', 'order', 'company_name',)
+    search_fields_extend = ('user_form__workflow_step_name', 'field__public_name', 'company_name',)
+    readonly_fields = ('company',)
     
     def user_form_name(self, obj):
-        return f"{obj.user_form.user_form_name}"
+        return f"{obj.user_form.workflow_step_name}"
+    
+    def form_field_name(self, obj):
+        return f"{obj.field.public_name}"
 
     def company_name(self, obj):
         return f"{obj.company.company_name}"
-    
-    def field_count(self, obj):
-        return 0
     
     # code to filter selects by company
     def get_form(self, request, obj=None, **kwargs):
@@ -94,11 +88,11 @@ class UserFormContentAdmin(BaseModelAdmin):
                     profile = Profile.objects.get(user=user)
 
                     # get the companies of the user
-                    user_companies = UserFormField.objects.filter(profile=profile).values_list('company', flat=True)
+                    user_companies = CompanyProfileSet.objects.filter(profile=profile).values_list('company', flat=True)
 
                     # get the available fields for the user
                     self.fields['fields'].queryset = UserFormField.objects.filter(company__in=user_companies)
-                    self.fields['user_form'].queryset = UserForm.objects.filter(company__in=user_companies)
+                    self.fields['user_form'].queryset = WorkflowStepForm.objects.filter(company__in=user_companies)
 
         # Return the new form class
         return RequestForm
@@ -113,6 +107,5 @@ admin.site.register(Workflow, WorkflowAdmin)
 admin.site.register(WorkflowStepForm, FormWorkflowStepAdmin)
 admin.site.register(WorkflowStepAction, ActionWorkflowStepAdmin)
 admin.site.register(WorkflowStepApproval, ApprovalWorkflowStepAdmin)
-admin.site.register(UserForm, UserFormAdmin)
 admin.site.register(UserFormField, UserFormFieldAdmin)
 admin.site.register(UserFormContent, UserFormContentAdmin)

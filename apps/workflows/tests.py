@@ -3,12 +3,11 @@ from apps.authentication.models.profile import Profile
 
 # Create your tests here.
 from apps.authentication.models.role import Role
-from apps.workflows.models import Workflow, UserForm, UserFormField
+from apps.workflows.models import Workflow, WorkflowStepForm, UserFormField, UserFormContent
 from django.core.exceptions import ValidationError
 from apps.authentication.models import Company
 from django.contrib.auth import get_user_model
 from apps.authentication.models.company_profile_set import CompanyProfileSet
-from apps.workflows.models import UserForm, UserFormField, UserFormContent
 
 class AddWorkflowToRoleSignalTest(TestCase):
     def setUp(self):
@@ -41,8 +40,11 @@ class UserFormContentTest(TestCase):
         self.CompanyProfileSet1 = CompanyProfileSet.objects.create(profile=self.profile1, company=self.company1)
         self.CompanyProfileSet2 = CompanyProfileSet.objects.create(profile=self.profile2, company=self.company2)
 
-        self.user_form1 = UserForm.objects.create(company=self.company1, user_form_name='UserForm 1')
-        self.user_form2 = UserForm.objects.create(company=self.company2, user_form_name='UserForm 2')
+        self.workflow1 = Workflow.objects.create(company=self.company1, workflow_name='Test Workflow 1')
+        self.workflow2 = Workflow.objects.create(company=self.company2, workflow_name='Test Workflow 2')
+
+        self.user_form1 = WorkflowStepForm.objects.create(company=self.company1, workflow_step_name='UserForm 1', workflow=self.workflow1)
+        self.user_form2 = WorkflowStepForm.objects.create(company=self.company2, workflow_step_name='UserForm 2', workflow=self.workflow2)
 
         self.field1 = UserFormField.objects.create(company=self.company1, public_name='Field 1', code='1', type='LongText')
         self.field2 = UserFormField.objects.create(company=self.company2, public_name='Field 2', code='2', type='ShortText')
@@ -64,7 +66,6 @@ class UserFormContentTest(TestCase):
         with self.assertRaises(ValidationError): 
             user_form_content.save(current_user=self.user1)  # Should raise ValidationError because field2 is from a different company than user_form1
 
-        
         user_form_content = UserFormContent(user_form=self.user_form2)
         user_form_content.field = self.field1
         user_form_content.order = 1
