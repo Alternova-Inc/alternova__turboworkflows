@@ -22,6 +22,9 @@ class UserFormContent(BaseModel):
         ordering = ['order']
         unique_together = ['user_form', 'order']
 
+    def __str__(self):
+        return f'{self.user_form.user_form_name} Content - {self.company.company_name}'
+
     def clean(self):
         if self.user_form.company != self.field.company:
             raise ValidationError("User Form must belong to the same company as the User Form Field.")
