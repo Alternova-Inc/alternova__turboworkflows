@@ -5,3 +5,4 @@ from apps.workflows.models.workflow_step_action import WorkflowStepAction
 from apps.workflows.models.workflow_step_approval import WorkflowStepApproval
 from apps.workflows.models.user_form_field import UserFormField
 from apps.workflows.models.user_form_content import UserFormContent
+from apps.workflows.models.workflow_sequence import WorkflowSequence
