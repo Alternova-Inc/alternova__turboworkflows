@@ -20,9 +20,9 @@ class WorkflowSequence(BaseModel):
     ]
 
     workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE)
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.CharField(max_length=255)
-    step = GenericForeignKey('content_type', 'object_id')
+    form_step = models.ForeignKey(WorkflowStepForm, on_delete=models.CASCADE, blank=True, null=True)
+    approval_step = models.ForeignKey(WorkflowStepApproval, on_delete=models.CASCADE, blank=True, null=True)
+    action_step = models.ForeignKey(WorkflowStepAction, on_delete=models.CASCADE, blank=True, null=True)
     order = models.PositiveIntegerField()
     company = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
     type = models.CharField(max_length=255, choices=TYPE_CHOICES, blank=True, null=True)
@@ -37,37 +37,59 @@ class WorkflowSequence(BaseModel):
         return f'{self.worfklow.workflow_name} - Sequence'
 
     def clean(self):
-        if isinstance(self.step, (WorkflowStepForm, WorkflowStepAction, WorkflowStepApproval)):
-            self.type = self.step.__class__.__name__
-        else:
-            raise ValidationError("Invalid step type.")
-        
-    #     if self.workflow.company != self.step.company:
-    #         raise ValidationError("User Form must belong to the same company as the User Form Field.")
+        if self.form_step and (self.approval_step or self.action_step):
+            raise ValidationError("Only one of form_step, approval_step, or action_step can be filled.")
 
-    # def validate_company(self, *args, **kwargs):
-    #     from apps.authentication.models.company_profile_set import CompanyProfileSet
-    #     # validate that the user_form belongs to the same company as the user
-    #     # In order for the validation to work we need to pass the user to the save method
-    #     current_user = kwargs['current_user']
-    #     if not current_user.is_superuser:
-    #         profile_companies = CompanyProfileSet.objects.filter(profile__user=current_user)
-    #         for company in profile_companies:
-    #             if self.user_form.company.id == company.id:
-    #                 raise ValidationError("User Form must belong to the same company as the user.")
+        elif self.approval_step and (self.form_step or self.action_step):
+            raise ValidationError("Only one of form_step, approval_step, or action_step can be filled.")
+
+        elif self.action_step and (self.form_step or self.approval_step):
+            raise ValidationError("Only one of form_step, approval_step, or action_step can be filled.")
+
+    def validate_company(self, *args, **kwargs):
+        from apps.authentication.models.company_profile_set import CompanyProfileSet
         
+        current_user = kwargs['current_user']
+        type = kwargs['type']
+
+        # first, validate that worflow and the selected step belong to the same company
+        if type == 'Form':
+            if self.workflow.company != self.form_step.company:
+                raise ValidationError("Workflow and Form Step must belong to the same company.")
+        elif type == 'Approval':
+            if self.workflow.company != self.approval_step.company:
+                raise ValidationError("Workflow and Approval Step must belong to the same company.")
+        elif type == 'Action':
+            if self.workflow.company != self.action_step.company:
+                raise ValidationError("Workflow and Action Step must belong to the same company.")
+
+        # validate that the workflow company belongs to the same company as the user
+        if not current_user.is_superuser:
+            profile_companies = CompanyProfileSet.objects.filter(profile__user=current_user).values_list('company', flat=True)
+            if self.workflow.company.id not in profile_companies:
+                raise ValidationError("Workflow must belong to the same company as the user.")
+
     def save(self, *args, **kwargs):            
         self.full_clean()
+        
+        # Always save the type automatically
+        if self.form_step:
+            self.type = 'Form'
+        elif self.approval_step:
+            self.type = 'Approval'
+        elif self.action_step:
+            self.type = 'Action'
 
-        # if hasattr(self, 'current_user'):
-        #     self.validate_company(self, current_user=self.current_user)
-        #     del self.current_user
+        # In order for the validation to work we need to pass the user to the save method
+        if hasattr(self, 'current_user'):
+            self.validate_company(self, current_user=self.current_user, type=self.type)
+            del self.current_user
 
-        # if hasattr(kwargs, 'current_user'):
-        #     current_user = kwargs.pop('current_user', None)
-        #     self.validate_company(self, current_user=current_user)
+        if 'current_user' in kwargs:
+            current_user = kwargs.pop('current_user', None)
+            self.validate_company(self, current_user=current_user, type=self.type)
 
-        # # Always save the company automatically
-        # self.company = self.user_form.company
-
+        # Always save the company automatically
+        self.company = self.workflow.company
         super().save(*args, **kwargs)
+        
