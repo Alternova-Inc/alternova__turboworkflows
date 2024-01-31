@@ -10,7 +10,6 @@ class WorkflowStep(BaseModel):
     """
 
     workflow_step_name = models.CharField(max_length=40, help_text="Workflow Step Name", verbose_name="Name")
-    workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
 
     class Meta:
