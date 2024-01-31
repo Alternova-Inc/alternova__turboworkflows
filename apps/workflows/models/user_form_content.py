@@ -32,22 +32,22 @@ class UserFormContent(BaseModel):
     def validate_company(self, *args, **kwargs):
         from apps.authentication.models.company_profile_set import CompanyProfileSet
         # validate that the user_form belongs to the same company as the user
-        # In order for the validation to work we need to pass the user to the save method
         current_user = kwargs['current_user']
         if not current_user.is_superuser:
-            profile_companies = CompanyProfileSet.objects.filter(profile__user=current_user)
-            for company in profile_companies:
-                if self.user_form.company.id == company.id:
-                    raise ValidationError("User Form must belong to the same company as the user.")
+            profile_companies = CompanyProfileSet.objects.filter(profile__user=current_user).values_list('company', flat=True)
+            if self.user_form.company.id not in profile_companies:
+                raise ValidationError("User Form must belong to the same company as the user.")
+                    
         
     def save(self, *args, **kwargs):            
         self.full_clean()
 
+        # In order for the validation to work we need to pass the user to the save method
         if hasattr(self, 'current_user'):
             self.validate_company(self, current_user=self.current_user)
             del self.current_user
 
-        if hasattr(kwargs, 'current_user'):
+        if 'current_user' in kwargs:
             current_user = kwargs.pop('current_user', None)
             self.validate_company(self, current_user=current_user)
 
