@@ -18,10 +18,5 @@ class WorkflowStep(BaseModel):
         abstract = True
 
     def __str__(self):
-        return self.workflow_step_name
-
-    def save(self, *args, **kwargs):
-        self.company = self.workflow.company
-        super().save(*args, **kwargs)
-    
+        return f'{self.workflow_step_name} - {self.company.company_name}'
     
