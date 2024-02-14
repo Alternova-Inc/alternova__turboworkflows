@@ -37,6 +37,9 @@ class WorkflowSequence(BaseModel):
         return f'{self.worfklow.workflow_name} - Sequence'
 
     def clean(self):
+        if not self.form_step and not self.approval_step and not self.action_step:
+            raise ValidationError("At least one of form_step, approval_step, or action_step must be selected.")
+
         if self.form_step and (self.approval_step or self.action_step):
             raise ValidationError("Only one of form_step, approval_step, or action_step can be filled.")
 
