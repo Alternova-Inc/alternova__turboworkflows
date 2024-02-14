@@ -1,4 +1,6 @@
+from apps.authentication.models.company_position import CompanyPosition
 from apps.workflows.models.workflow_step import WorkflowStep
+from django.db import models
 
 
 class WorkflowStepApproval(WorkflowStep):
@@ -6,6 +8,9 @@ class WorkflowStepApproval(WorkflowStep):
     - Approvals people will make
     """ 
 
+    required_position = models.ForeignKey(CompanyPosition, on_delete=models.CASCADE)
+
     class Meta:
         verbose_name = 'Approval Step'
         verbose_name_plural = 'Approval Steps'
+        unique_together = ('company', 'required_position')

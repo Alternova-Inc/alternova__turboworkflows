@@ -10,7 +10,6 @@ class WorkflowStepAdmin(BaseModelAdmin):
 
     list_extend = ('workflow_step_name', 'company_name',)
     search_fields_extend = ('workflow_step_name',)
-    readonly_fields = ('company',)
     list_filter = ('company',)
     
     def company_name(self, obj):
@@ -31,7 +30,12 @@ class ActionWorkflowStepAdmin(WorkflowStepAdmin):
 
 
 class ApprovalWorkflowStepAdmin(WorkflowStepAdmin):
-    pass
+    list_extend = ('workflow_step_name', 'company_name', 'required_position')
+    search_fields_extend = ('workflow_step_name', 'company_name',)
+    list_filter = ('company',)
+    
+    def company_name(self, obj):
+        return f"{obj.company.company_name}"
 
 
 admin.site.register(WorkflowStepForm, FormWorkflowStepAdmin)
