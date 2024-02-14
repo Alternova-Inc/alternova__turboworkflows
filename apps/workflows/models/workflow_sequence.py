@@ -34,7 +34,7 @@ class WorkflowSequence(BaseModel):
         unique_together = ['workflow', 'order']
 
     def __str__(self):
-        return f'{self.worfklow.workflow_name} - Sequence'
+        return f'{self.workflow.workflow_name} - Sequence'
 
     def clean(self):
         if not self.form_step and not self.approval_step and not self.action_step:
