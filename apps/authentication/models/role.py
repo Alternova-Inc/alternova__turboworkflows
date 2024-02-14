@@ -23,7 +23,7 @@ class Role(BaseModel):
         verbose_name_plural = 'Roles'
 
     def __str__(self):
-        return self.role_name
+        return f'{self.role_name} - {self.company.company_name}'
     
     def clean(self):
         if self.is_default and Role.objects.filter(company=self.company, is_default=True).exclude(pk=self.pk).exists():

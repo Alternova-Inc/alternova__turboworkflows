@@ -1,4 +1,6 @@
 from django.contrib import admin
+from apps.authentication.models.company_department import CompanyDepartment
+from apps.authentication.models.company_position import CompanyPosition
 
 # Register your models here.
 from apps.authentication.models.profile import Profile
@@ -34,6 +36,7 @@ class ProfileAdmin(BaseModelAdmin):
     def user_last_login(self, obj):
         return obj.user.last_login
 
+
 class CompanyAdmin(BaseModelAdmin):
     list_extend = ('company_name',)
     search_fields_extend = ('company_name',)
@@ -45,6 +48,18 @@ class RoleAdmin(BaseModelAdmin):
     filter_horizontal = ('workflows',)
 
 
+class CompanyDepartmentAdmin(BaseModelAdmin):
+    list_extend = ('department_name', 'company',)
+    search_fields_extend = ('department_name', 'company__company_name',)
+
+
+class CompanyPositionAdmin(BaseModelAdmin):
+    list_extend = ('position_name', 'is_approver', 'company',)
+    search_fields_extend = ('position_name', 'company__company_name',)
+
+
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(Role, RoleAdmin)
+admin.site.register(CompanyDepartment, CompanyDepartmentAdmin)
+admin.site.register(CompanyPosition, CompanyPositionAdmin)
