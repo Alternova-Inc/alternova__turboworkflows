@@ -36,11 +36,7 @@ Follow these steps to install TurboWorkflows:
 ```
     SECRET_KEY=your-django-secret-key
     DEBUG=True
-    DB_NAME=your-database-name
-    DB_USER=your-database-user
-    DB_PASSWORD=your-database-password
-    DB_HOST=your-database-host
-    DB_PORT=your-database-portenv
+    DATABASE_URL=postgres://user:password@host:port/database
 ```
 <br>
 
