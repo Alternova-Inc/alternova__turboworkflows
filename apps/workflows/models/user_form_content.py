@@ -15,6 +15,7 @@ class UserFormContent(BaseModel):
     field = models.ForeignKey(UserFormField, on_delete=models.CASCADE)
     order = models.PositiveIntegerField()
     company = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
+    is_required = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = 'User Form Content'
