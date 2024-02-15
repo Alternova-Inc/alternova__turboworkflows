@@ -12,6 +12,7 @@ from apps.defaults.admin import BaseModelAdmin
 class CompanyProfileSetInline(admin.TabularInline):
     model = CompanyProfileSet
     extra = 0  # number of extra forms to display
+    fk_name = 'profile'
 
 class ProfileAdmin(BaseModelAdmin):
     list_extend = ('user_name', 'user_email', 'user_username', 'user_is_staff', 'user_is_superuser', 'user_last_login',)

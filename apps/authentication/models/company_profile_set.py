@@ -14,10 +14,11 @@ class CompanyProfileSet(BaseModel):
     """
 
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='user_profile')
     role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
     department = models.ForeignKey(CompanyDepartment, on_delete=models.SET_NULL, null=True)
     position = models.ForeignKey(CompanyPosition, on_delete=models.SET_NULL, null=True)
+    direct_manager = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='manager_profile')
 
     class Meta:
         verbose_name = 'Company-Profile Set'
@@ -32,7 +33,10 @@ class CompanyProfileSet(BaseModel):
         
         if self.company != self.position.company:
             raise ValidationError("Selected company and position's company must be the same.")
-
+        
+        if self.profile == self.direct_manager and not self.profile.user.is_superuser:
+            raise ValidationError("Profile and direct manager must be different.")
+            
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
