@@ -29,7 +29,7 @@ class WorkflowSequenceAdmin(BaseModelAdmin):
         return step_name
 
     def company_name(self, obj):
-        return f"{obj.company.company_name}"
+        return f"{obj.workflow.company.company_name}"
     
     # code to filter selects by company
     def get_form(self, request, obj=None, **kwargs):
@@ -55,10 +55,5 @@ class WorkflowSequenceAdmin(BaseModelAdmin):
 
         # Return the new form class
         return RequestForm
-    
-    # pass the current user from the django admin to the save() method.
-    def save_model(self, request, obj, form, change):
-        obj.current_user = request.user
-        super().save_model(request, obj, form, change)
 
 admin.site.register(WorkflowSequence, WorkflowSequenceAdmin)
