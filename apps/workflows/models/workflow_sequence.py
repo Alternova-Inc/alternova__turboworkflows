@@ -24,7 +24,6 @@ class WorkflowSequence(BaseModel):
     approval_step = models.ForeignKey(WorkflowStepApproval, on_delete=models.CASCADE, blank=True, null=True)
     action_step = models.ForeignKey(WorkflowStepAction, on_delete=models.CASCADE, blank=True, null=True)
     order = models.PositiveIntegerField()
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, blank=True, null=True)
     type = models.CharField(max_length=255, choices=TYPE_CHOICES, blank=True, null=True)
 
     class Meta:
@@ -66,12 +65,6 @@ class WorkflowSequence(BaseModel):
             if self.workflow.company != self.action_step.company:
                 raise ValidationError("Workflow and Action Step must belong to the same company.")
 
-        # validate that the workflow company belongs to the same company as the user
-        if not current_user.is_superuser:
-            profile_companies = CompanyProfileSet.objects.filter(profile__user=current_user).values_list('company', flat=True)
-            if self.workflow.company.id not in profile_companies:
-                raise ValidationError("Workflow must belong to the same company as the user.")
-
     def save(self, *args, **kwargs):            
         self.full_clean()
         
@@ -83,16 +76,5 @@ class WorkflowSequence(BaseModel):
         elif self.action_step:
             self.type = 'Action'
 
-        # In order for the validation to work we need to pass the user to the save method
-        if hasattr(self, 'current_user'):
-            self.validate_company(self, current_user=self.current_user, type=self.type)
-            del self.current_user
-
-        if 'current_user' in kwargs:
-            current_user = kwargs.pop('current_user', None)
-            self.validate_company(self, current_user=current_user, type=self.type)
-
-        # Always save the company automatically
-        self.company = self.workflow.company
         super().save(*args, **kwargs)
         
