@@ -7,6 +7,7 @@ class StatusMessage(BaseModel):
     - This is used to show status messages on the first page of the django admin.
     - Thhis should be used to show important maintenance messages to the user.
     - By default, the status message is not active.
+    - Only one message can be active at a time.
     """
 
     status_message_name = models.CharField(max_length=40, help_text="Status Message Name", verbose_name="Name")
