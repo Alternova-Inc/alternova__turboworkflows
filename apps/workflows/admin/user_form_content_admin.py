@@ -10,7 +10,6 @@ from apps.workflows.models.workflow_step_form import WorkflowStepForm
 class UserFormContentAdmin(BaseModelAdmin):
     list_extend = ('user_form_name', 'form_field_name', 'order', 'company_name',)
     search_fields_extend = ('user_form__workflow_step_name', 'field__public_name', 'company_name',)
-    readonly_fields = ('company',)
     list_filter = ('user_form__workflow_step_name',)
     
     def user_form_name(self, obj):

@@ -11,7 +11,7 @@ from apps.workflows.models.workflow_step_form import WorkflowStepForm
 class WorkflowSequenceAdmin(BaseModelAdmin):
     list_extend = ('workflow_name', 'step_name', 'type', 'order', 'company_name',)
     search_fields_extend = ('worflow__workflow_name', 'company_name',)
-    readonly_fields = ('company', 'type',)
+    readonly_fields = ('type',)
     list_filter = ('workflow__workflow_name',)
     
     def workflow_name(self, obj):
