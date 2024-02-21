@@ -23,7 +23,7 @@ class UserFormContent(BaseModel):
         unique_together = ['user_form', 'order']
 
     def __str__(self):
-        return f'{self.user_form.workflow_step_name} Content - {self.company.company_name}'
+        return f'{self.user_form.workflow_step_name} Content - {self.user_form.company.company_name}'
 
     def clean(self):
         if self.user_form.company != self.field.company:
