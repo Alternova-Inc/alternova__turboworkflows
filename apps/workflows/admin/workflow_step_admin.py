@@ -26,7 +26,21 @@ class FormWorkflowStepAdmin(WorkflowStepAdmin):
 
 
 class ActionWorkflowStepAdmin(WorkflowStepAdmin):
-    pass
+    list_extend = ('workflow_step_name', 'company_name', 'class_name', 'module_path')
+    search_fields_extend = ('workflow_step_name', 'company_name',)
+    list_filter = ('company',)
+    
+    def company_name(self, obj):
+        return f"{obj.company.company_name}"
+    
+    # Execute the action. Mostly to test the action
+    def execute_action(modeladmin, request, queryset):
+        for obj in queryset:
+            obj.execute()
+
+    execute_action.short_description = "Execute selected actions"
+
+    actions = [execute_action]
 
 
 class ApprovalWorkflowStepAdmin(WorkflowStepAdmin):
