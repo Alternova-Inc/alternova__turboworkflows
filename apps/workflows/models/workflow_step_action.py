@@ -19,7 +19,7 @@ class WorkflowStepAction(WorkflowStep):
         verbose_name = 'Action Step'
         verbose_name_plural = 'Action Steps'
     
-    def execute(self):
+    def execute(self, test_run=False):
         """
         - This method will execute the action
         """
@@ -29,6 +29,7 @@ class WorkflowStepAction(WorkflowStep):
 
         # instantiates the class and passes the kwargs to it.
         # This executes the __init__ method
+        self.class_kwargs['test_run'] = test_run
         class_instance = class_pointer(**self.class_kwargs) 
 
         if self.class_method:
