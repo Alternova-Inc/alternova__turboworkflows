@@ -12,6 +12,7 @@ class WorkflowStepAction(WorkflowStep):
 
     class_name = models.CharField(max_length=50)
     module_path = models.CharField(max_length=140, help_text="Example: apps.workflows.action_classes")
+    class_method = models.CharField(max_length=50, blank=True, null=True, help_text="If blank, code should run in constructor")
     class_kwargs = models.JSONField(blank=True, null=True)
     
     class Meta:
@@ -25,6 +26,13 @@ class WorkflowStepAction(WorkflowStep):
         import importlib
         module = importlib.import_module(self.module_path)
         class_pointer = getattr(module, self.class_name)
-        mailgun_email = class_pointer(**self.class_kwargs)
-        mailgun_email.send()
-        del mailgun_email
+
+        # instantiates the class and passes the kwargs to it.
+        # This executes the __init__ method
+        class_instance = class_pointer(**self.class_kwargs) 
+
+        if self.class_method:
+            method = getattr(class_instance, self.class_method) # gets the method from the class
+            method() # executes the method
+        
+        del class_instance # deletes the instance to free memory
