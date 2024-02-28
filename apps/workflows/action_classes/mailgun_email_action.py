@@ -1,15 +1,18 @@
 import requests
 import environ
+import json
 
 class MailgunEmailAction:
     """
     - This is a class that sends emails using mailgun
     - The class must be added to the __init__.py file in the action_classes folder in order for the import to work
     - Allowed params in kwargs:
-        - cc_list: list of emails to cc
-        - bcc_list: list of emails to bcc
-        - subject_text: string with the email subject
-        - body_text: string with the email body
+        - to_list: list of emails to send to - required
+        - cc_list: list of emails to cc - optional
+        - bcc_list: list of emails to bcc - optional
+        - template_name: name of the mailgun template - required
+        - template_variables: dictionary with mailgun variables - This field will be transformed into a JSON
+          If the template variables are not found, an empty JSON will be sent and the template might be sent with the placeholders.
     """
 
     def __init__(self, **kwargs):
@@ -27,24 +30,38 @@ class MailgunEmailAction:
         self.domain = env('MAILGUN_DOMAIN')
         self.sender = env('MAILGUN_SENDER')
 
-    def send(self):
-        if not hasattr(self, 'cc_list'):
-            self.cc_list = []
-        if not hasattr(self, 'bcc_list'):
-            self.bcc_list = []
+        if self.test_run:
+            self.template_variables = {
+                'cash_days': '5',
+                'employee_name': 'Test',
+                'end_date': '2023-01-02',
+                'start_date': '2023-01-10'
+            }
 
-        if not hasattr(self, 'subject_text') or not hasattr(self, 'body_text'):
+    def send(self):
+        # we create the data parameter to send with mailgun
+        if not hasattr(self, 'to_list') or not hasattr(self, 'template_name'):
             response = {
-                "error": "subject_text and body_text are required.",
+                "text": "to_list and template_name are required.",
                 "status_code": 400
             }
         else:
+            # check optional variables
+            if not hasattr(self, 'cc_list'):
+                self.cc_list = []
+            if not hasattr(self, 'bcc_list'):
+                self.bcc_list = []
+            if not hasattr(self, 'template_variables'):
+                self.template_variables = {}
+            
+            # send request to mailgun
             response = requests.post(self.url, auth=("api", self.api_key),
-            data={"from": self.sender,
-                "to": self.cc_list,
+            data={
+                "to": self.to_list,
+                "cc": self.cc_list,
                 "bcc": self.bcc_list,
-                "subject": self.subject_text,
-                "text": self.body_text,
+                "template": "turboworkflows - vacaciones aprobadas",
+                "h:X-Mailgun-Variables": json.dumps(self.template_variables)
                 })
 
         # Now you can do something with the response
