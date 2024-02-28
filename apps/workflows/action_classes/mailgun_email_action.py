@@ -31,6 +31,7 @@ class MailgunEmailAction:
         self.sender = env('MAILGUN_SENDER')
 
         if self.test_run:
+            self.template_name = "turboworkflows - vacaciones aprobadas"
             self.template_variables = {
                 'cash_days': '5',
                 'employee_name': 'Test',
@@ -60,7 +61,7 @@ class MailgunEmailAction:
                 "to": self.to_list,
                 "cc": self.cc_list,
                 "bcc": self.bcc_list,
-                "template": "turboworkflows - vacaciones aprobadas",
+                "template": self.template_name,
                 "h:X-Mailgun-Variables": json.dumps(self.template_variables)
                 })
 
