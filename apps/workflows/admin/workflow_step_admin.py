@@ -36,9 +36,9 @@ class ActionWorkflowStepAdmin(WorkflowStepAdmin):
     # Execute the action. Mostly to test the action
     def execute_action(modeladmin, request, queryset):
         for obj in queryset:
-            obj.execute()
+            obj.execute(test_run=True)
 
-    execute_action.short_description = "Execute selected actions"
+    execute_action.short_description = "Test selected actions execution"
 
     actions = [execute_action]
 
