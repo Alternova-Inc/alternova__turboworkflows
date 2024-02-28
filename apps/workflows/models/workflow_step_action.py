@@ -27,10 +27,11 @@ class WorkflowStepAction(WorkflowStep):
         module = importlib.import_module(self.module_path)
         class_pointer = getattr(module, self.class_name)
 
-        # instantiates the class and passes the kwargs to it.
-        # This executes the __init__ method
+        # always pass the test_run value to the class_kwargs
         self.class_kwargs['test_run'] = test_run
-        class_instance = class_pointer(**self.class_kwargs) 
+
+        # instantiates the class and passes the kwargs to it.
+        class_instance = class_pointer(**self.class_kwargs) # This executes the __init__ method (constructor)
 
         if self.class_method:
             method = getattr(class_instance, self.class_method) # gets the method from the class

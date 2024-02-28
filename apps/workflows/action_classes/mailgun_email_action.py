@@ -11,7 +11,7 @@ class MailgunEmailAction:
         - cc_list: list of emails to cc - optional
         - bcc_list: list of emails to bcc - optional
         - template_name: name of the mailgun template - required
-        - template_variables: dictionary with mailgun variables - This field will be transformed into a JSON
+        - template_variables: dictionary with mailgun variables - optional
           If the template variables are not found, an empty JSON will be sent and the template might be sent with the placeholders.
     """
 
@@ -48,12 +48,9 @@ class MailgunEmailAction:
             }
         else:
             # check optional variables
-            if not hasattr(self, 'cc_list'):
-                self.cc_list = []
-            if not hasattr(self, 'bcc_list'):
-                self.bcc_list = []
-            if not hasattr(self, 'template_variables'):
-                self.template_variables = {}
+            self.cc_list = [] if not hasattr(self, 'cc_list') else self.cc_list
+            self.bcc_list = [] if not hasattr(self, 'bcc_list') else self.bcc_list
+            self.template_variables = {} if not hasattr(self, 'template_variables') else self.template_variables
             
             # send request to mailgun
             response = requests.post(self.url, auth=("api", self.api_key),
@@ -65,7 +62,7 @@ class MailgunEmailAction:
                 "h:X-Mailgun-Variables": json.dumps(self.template_variables)
                 })
 
-        # Now you can do something with the response
+        # Manage success or failure
         if response.status_code == 200:
             print("Email sent successfully!")
         else:
