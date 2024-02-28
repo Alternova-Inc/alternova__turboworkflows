@@ -21,7 +21,7 @@ class MailgunEmailAction:
         env = environ.Env()
         environ.Env.read_env()
 
-        # Get Mailgun API key and domain from .env file
+        # Get Mailgun variables from .env file
         self.url = env('MAILGUN_URL')
         self.api_key = env('MAILGUN_API_KEY')
         self.domain = env('MAILGUN_DOMAIN')
